@@ -1,0 +1,12 @@
+{
+    "Author": "Wariela",
+    "Name": "On the fly translator",
+    "Punchline": "A simple plugin that translate spell names into another language.",
+    "Description": "A simple plugin that translate spell names into another language.",
+    "ApplicableVersion": "any",
+    "Tags": [
+        "translator",
+        "translation",
+        "spells"
+    ]
+}
