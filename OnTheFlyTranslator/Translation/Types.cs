@@ -8,7 +8,7 @@ namespace OnTheFlyTranslator.Translation
         public string TranslatedName { get; set; } = translatedName;
     }
 
-    internal class TranslationDatas<T>(T? originalValue, T? translatedValue) where T : ExcelRow
+    internal class TranslationDatas<T>(T? originalValue, T? translatedValue) where T : struct, IExcelRow<T>
     {
         public T? Original { get; } = originalValue;
         public T? Target { get; } = translatedValue;

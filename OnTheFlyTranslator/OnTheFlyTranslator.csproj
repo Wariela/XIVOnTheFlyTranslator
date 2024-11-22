@@ -4,14 +4,21 @@
   <PropertyGroup>
     <Authors></Authors>
     <Company></Company>
-    <Version>0.0.0.2</Version>
+    <Version>0.0.0.3</Version>
     <Description>A dalamud plugin that translate spell name on the fly</Description>
     <Copyright></Copyright>
-    <PackageProjectUrl>https://github.com/goatcorp/SamplePlugin</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Wariela/XIVOnTheFlyTranslator</PackageProjectUrl>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DebugType>none</DebugType>
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DebugType>none</DebugType>
+  </PropertyGroup>
   <ItemGroup>
-    <PackageReference Update="DalamudPackager" Version="2.1.13" />
+    <PackageReference Update="DalamudPackager" Version="11.0.0" />
   </ItemGroup>
 </Project>

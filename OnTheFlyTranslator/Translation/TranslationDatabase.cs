@@ -4,7 +4,7 @@ using Lumina.Excel;
 
 namespace OnTheFlyTranslator.Translation
 {
-    internal class TranslationDatabase<T> where T : ExcelRow
+    internal class TranslationDatabase<T> where T : struct, IExcelRow<T>
     {
         private ExcelSheet<T>? originalSheet;
         private ExcelSheet<T>? targetSheet;
@@ -18,7 +18,7 @@ namespace OnTheFlyTranslator.Translation
         {
             var targetLanguage = Configuration.GetInstance().eTargetLanguage;
             var targetLuminaLanguage = targetLanguage.ToLumina();
-            if (originalSheet == null || targetSheet == null || targetSheet.RequestedLanguage != targetLuminaLanguage)
+            if (originalSheet == null || targetSheet == null || targetSheet.Language != targetLuminaLanguage)
             {
                 targetSheet = DalamudApi.DataManager.GetExcelSheet<T>(targetLanguage);
                 originalSheet = DalamudApi.DataManager.GetExcelSheet<T>(DalamudApi.DataManager.Language);
