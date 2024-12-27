@@ -41,11 +41,11 @@ namespace OnTheFlyTranslator
 
         public void Dispose()
         {
-            this.WindowSystem.RemoveAllWindows();
+            WindowSystem.RemoveAllWindows();
             ConfigWindow.Dispose();
             Configuration.GetInstance().Save();
             TranslationService.GetInstance()?.Dispose();
-            this.CommandManager.RemoveHandler("/otft");
+            CommandManager.RemoveHandler("/otft");
         }
 
         private void OpenSettings(string command, string args)
@@ -55,7 +55,8 @@ namespace OnTheFlyTranslator
 
         private void DrawUI()
         {
-            this.WindowSystem.Draw();
+            TranslationService.GetInstance()?.DrawDebug();
+            WindowSystem.Draw();
         }
 
         public void DrawConfigUI()

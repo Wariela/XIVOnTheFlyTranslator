@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OnTheFlyTranslator": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

@@ -21,10 +21,12 @@ namespace OnTheFlyTranslator
         [NonSerialized]
         private IDalamudPluginInterface? pluginInterface;
 
+
         public int Version { get; set; } = 1;
         public ClientLanguage eTargetLanguage { get; set; } = ClientLanguage.French;
         public CastBarTranslationStyle eOption { get; set; } = CastBarTranslationStyle.SmallerText;
         public bool EnableTranslation { get; set; } = true;
+        public static bool DrawDebugWindow = false ;
 
         public void Initialize(IDalamudPluginInterface pluginInterface)
         {

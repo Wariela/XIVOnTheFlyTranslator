@@ -1,5 +1,3 @@
-using Dalamud;
-using Dalamud.Utility;
 using Lumina.Excel;
 
 namespace OnTheFlyTranslator.Translation
@@ -17,12 +15,14 @@ namespace OnTheFlyTranslator.Translation
         public void UpdateSheets()
         {
             var targetLanguage = Configuration.GetInstance().eTargetLanguage;
-            var targetLuminaLanguage = targetLanguage.ToLumina();
-            if (originalSheet == null || targetSheet == null || targetSheet.Language != targetLuminaLanguage)
-            {
-                targetSheet = DalamudApi.DataManager.GetExcelSheet<T>(targetLanguage);
-                originalSheet = DalamudApi.DataManager.GetExcelSheet<T>(DalamudApi.DataManager.Language);
-            }
+            targetSheet = DalamudApi.DataManager.GetExcelSheet<T>(targetLanguage);
+            originalSheet = DalamudApi.DataManager.GetExcelSheet<T>(DalamudApi.DataManager.Language);
+        }
+
+        public ExcelSheet<T>? GetSheet(bool bOriginalLanguageSheet = true)
+        {
+            UpdateSheets();
+            return bOriginalLanguageSheet ? originalSheet : targetSheet;
         }
 
         public TranslationDatas<T> GetAvailableTranslation(uint rowId)

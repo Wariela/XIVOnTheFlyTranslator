@@ -1,7 +1,10 @@
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
+using OnTheFlyTranslator.Translation;
 using System;
 using System.Numerics;
+using System.Transactions;
 
 namespace OnTheFlyTranslator
 {
@@ -34,6 +37,9 @@ namespace OnTheFlyTranslator
 
             configuration.eTargetLanguage = DrawComboEnum("Target language", configuration.eTargetLanguage);
             configuration.eOption = DrawComboEnum("Style option", configuration.eOption);
+
+            if (ImGui.TreeNodeEx("Debugging options", ImGuiTreeNodeFlags.Framed))
+                Configuration.DrawDebugWindow |= ImGui.Button("Display database debug window");
         }
 
         private static T DrawComboEnum<T>(string comboName, T target) where T : Enum
