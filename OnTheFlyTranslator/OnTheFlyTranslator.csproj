@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Authors></Authors>
     <Company></Company>
-    <Version>0.0.0.3</Version>
+    <Version>0.0.0.4</Version>
     <Description>A dalamud plugin that translate spell name on the fly</Description>
     <Copyright></Copyright>
     <PackageProjectUrl>https://github.com/Wariela/XIVOnTheFlyTranslator</PackageProjectUrl>
