@@ -58,7 +58,7 @@ namespace OnTheFlyTranslator
                 return;
 
             var translatedAction = translationService.GetActionTranslation(target.CastActionId);
-            if(translatedAction == null) 
+            if(translatedAction == null || translatedAction.TranslatedName.Contains("_rsv_")) 
                 return;
 
             var castNameNode = addon->GetTextNodeById(4);
