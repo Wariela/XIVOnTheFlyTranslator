@@ -37,29 +37,31 @@ namespace OnTheFlyTranslator
 
         protected override unsafe void UpdateElement(AtkUnitBase* addon)
         {
-            var configuration = Configuration.GetInstance();
-            if (!configuration.EnableTranslation)
+            AtkTextNode* pCastNameNode = null;
+            TranslationResult? translationResult = null;
+            if (!Configuration.GetInstance().EnableTranslation)
                 return;
 
             var target = DalamudApi.TargetManager.Target as IBattleChara ?? DalamudApi.TargetManager.SoftTarget as IBattleChara;
             if (target == null || !target.IsCasting)
                 return;
 
-            var translatedAction = translationService.GetActionTranslation(target.CastActionId);
-            if (translatedAction == null || translatedAction.TranslatedName.Contains("_rsv_"))
+
+            pCastNameNode = addon->GetTextNodeById(4);
+            if (pCastNameNode == null)
                 return;
 
-            var castNameNode = addon->GetTextNodeById(4);
-            if (castNameNode == null)
+            translationResult = translationService.GetActionTranslation(target.CastActionId);
+            if (translationResult == null || translationResult.TranslatedName.Contains("_rsv_"))
                 return;
 
-            switch (configuration.eOption)
+            switch (Configuration.GetInstance().eOption)
             {
                 case CastBarTranslationStyle.Parenthesis:
-                    castNameNode->SetText($"{translatedAction.OriginalName} ({translatedAction.TranslatedName})");
+                    pCastNameNode->SetText($"{translationResult.OriginalName} ({translationResult.TranslatedName})");
                     break;
                 case CastBarTranslationStyle.SmallerText:
-                    castBarAdditionalName = CreateAdditionalNameNode(addon, castNameNode);
+                    castBarAdditionalName = CreateAdditionalNameNode(addon, pCastNameNode);
                     if (castBarAdditionalName == null)
                     {
                         DalamudApi.PluginLog.Error("Couldn't get or create new ATK Text Node");
@@ -69,11 +71,11 @@ namespace OnTheFlyTranslator
                     castBarAdditionalName->AtkResNode.SetScale(0.8f, 0.8f);
                     castBarAdditionalName->AtkResNode.SetPositionFloat(7, -13);
                     castBarAdditionalName->SetAlignment(AlignmentType.Left);
-                    castBarAdditionalName->SetAlpha(castNameNode->Alpha_2);
-                    castBarAdditionalName->SetText(translatedAction.TranslatedName);
+                    castBarAdditionalName->SetAlpha(pCastNameNode->Alpha_2);
+                    castBarAdditionalName->SetText(translationResult.TranslatedName);
                     break;
                 case CastBarTranslationStyle.NoOriginalText:
-                    castNameNode->SetText(translatedAction.TranslatedName);
+                    pCastNameNode->SetText(translationResult.TranslatedName);
                     break;
             }
         }
