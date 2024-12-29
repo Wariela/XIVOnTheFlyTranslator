@@ -59,26 +59,12 @@ namespace OnTheFlyTranslator
                     castNameNode->SetText($"{translatedAction.OriginalName} ({translatedAction.TranslatedName})");
                     break;
                 case CastBarTranslationStyle.SmallerText:
+                    castBarAdditionalName = CreateAdditionalNameNode(addon, castNameNode);
                     if (castBarAdditionalName == null)
                     {
-                        DalamudApi.PluginLog.Warning("Necessary UI not created. Creating now.");
-                        castBarAdditionalName = UIManipulationHelper.CloneNode(castNameNode);
-                        if (castBarAdditionalName == null)
-                        {
-                            DalamudApi.PluginLog.Error("Couldn't create atk text node");
-                            return;
-                        }
-
-                        var newStrPtr = UIManipulationHelper.Alloc(1024);
-                        castBarAdditionalName->NodeText.StringPtr = (byte*)newStrPtr;
-                        castBarAdditionalName->NodeText.BufSize = 1024;
-
-                        UIManipulationHelper.ExpandNodeList(addon, 1);
-                        addon->UldManager.NodeList[addon->UldManager.NodeListCount++] = (AtkResNode*)castBarAdditionalName;
-                    }
-
-                    if (castBarAdditionalName == null)
+                        DalamudApi.PluginLog.Error("Couldn't get or create new ATK Text Node");
                         return;
+                    }
 
                     castBarAdditionalName->AtkResNode.SetScale(0.8f, 0.8f);
                     castBarAdditionalName->AtkResNode.SetPositionFloat(7, -13);
@@ -90,6 +76,28 @@ namespace OnTheFlyTranslator
                     castNameNode->SetText(translatedAction.TranslatedName);
                     break;
             }
+        }
+
+        private AtkTextNode* CreateAdditionalNameNode(AtkUnitBase* addon, AtkTextNode* srcNode)
+        {
+            if (castBarAdditionalName != null)
+            { 
+                return castBarAdditionalName;
+            }
+
+            DalamudApi.PluginLog.Warning("Necessary UI not created. Creating now.");
+            castBarAdditionalName = UIManipulationHelper.CloneNode(srcNode);
+            if (castBarAdditionalName == null)
+                return null;
+
+            var newStrPtr = UIManipulationHelper.Alloc(1024);
+            castBarAdditionalName->NodeText.StringPtr = (byte*)newStrPtr;
+            castBarAdditionalName->NodeText.BufSize = 1024;
+
+            UIManipulationHelper.ExpandNodeList(addon, 1);
+            addon->UldManager.NodeList[addon->UldManager.NodeListCount++] = (AtkResNode*)castBarAdditionalName;
+            return castBarAdditionalName;
+
         }
     }
 }
