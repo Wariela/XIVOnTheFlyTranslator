@@ -1,10 +1,7 @@
-using Dalamud.Interface.Colors;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using OnTheFlyTranslator.Translation;
 using System;
 using System.Numerics;
-using System.Transactions;
 
 namespace OnTheFlyTranslator
 {
