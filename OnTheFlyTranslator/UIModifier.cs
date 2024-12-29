@@ -9,10 +9,10 @@ namespace OnTheFlyTranslator
 {
     public abstract unsafe class UIModifier: IDisposable
     {
-        public UIModifier()
+        public UIModifier(string targetAddon)
         {
-            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, HandlePostRefreshEvent);
-            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, HandlePreDrawEvent);
+            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, targetAddon, HandlePostRefreshEvent);
+            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, targetAddon, HandlePreDrawEvent);
         }
 
         public void Dispose()
@@ -30,8 +30,6 @@ namespace OnTheFlyTranslator
         {
 
         }
-
-        protected abstract void UpdateElement(AtkUnitBase* addon);
     }
 
     public unsafe class UIManipulationHelper

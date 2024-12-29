@@ -3,65 +3,65 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.Addon.Lifecycle;
 
 using OnTheFlyTranslator.Translation;
-using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Utility;
+
 namespace OnTheFlyTranslator
 {
     public unsafe class TargetWatcher : UIModifier
     {
+        private static readonly uint STRING_ALLOC_SIZE = 1024;
+        private static readonly uint TARGET_TEXT_NODE_INDEX = 4;
+
         private readonly TranslationService translationService;
         private AtkTextNode* castBarAdditionalName;
 
-        public TargetWatcher()
+        public TargetWatcher(): base("_TargetInfoCastBar")
         {
             translationService = TranslationService.GetInstance();
         }
 
-        protected override void HandlePostRefreshEvent(AddonEvent type, AddonArgs args)
-        {
-            if(args.AddonName == "HudLayout")
-                castBarAdditionalName = null;
-        }
-
         protected override void HandlePreDrawEvent(AddonEvent type, AddonArgs args)
         {
-            var unitBase = (AtkUnitBase*)args.Addon;
-            if (unitBase == null)
+            AtkUnitBase* pUnitBase;
+            if ((pUnitBase = (AtkUnitBase*)args.Addon) == null)
+            {
                 return;
+            }
 
-            if (castBarAdditionalName != null)
-                castBarAdditionalName->SetText("");
-
-            if (args.AddonName == "_TargetInfoCastBar")
-                UpdateElement(unitBase);
+            UpdateElement(pUnitBase);
         }
 
-        protected override unsafe void UpdateElement(AtkUnitBase* addon)
+        protected unsafe void UpdateElement(AtkUnitBase* pBaseNode)
         {
-            AtkTextNode* pCastNameNode = null;
-            TranslationResult? translationResult = null;
-            if (!Configuration.GetInstance().EnableTranslation)
+            if (pBaseNode == null)
+            {
                 return;
+            }
 
-            var target = DalamudApi.TargetManager.Target as IBattleChara ?? DalamudApi.TargetManager.SoftTarget as IBattleChara;
-            if (target == null || !target.IsCasting)
+            AtkTextNode* pTextNode = null;
+            if (!Configuration.GetInstance().EnableTranslation || !GetTargetTextNode(pBaseNode, ref pTextNode) || pTextNode == null)
+            {
+                if(castBarAdditionalName != null)
+                {
+                    castBarAdditionalName->ToggleVisibility(false);
+                }
+                
                 return;
+            }
 
-
-            pCastNameNode = addon->GetTextNodeById(4);
-            if (pCastNameNode == null)
+            TranslationResult translationResult = new TranslationResult("", "");
+            if (!GetTranslationFromString(pTextNode->NodeText.ToString(), ref translationResult))
+            {
                 return;
-
-            translationResult = translationService.GetActionTranslation(target.CastActionId);
-            if (translationResult == null || translationResult.TranslatedName.Contains("_rsv_"))
-                return;
+            }
 
             switch (Configuration.GetInstance().eOption)
             {
                 case CastBarTranslationStyle.Parenthesis:
-                    pCastNameNode->SetText($"{translationResult.OriginalName} ({translationResult.TranslatedName})");
+                    pTextNode->SetText($"{translationResult.OriginalName} ({translationResult.TranslatedName})");
                     break;
                 case CastBarTranslationStyle.SmallerText:
-                    castBarAdditionalName = CreateAdditionalNameNode(addon, pCastNameNode);
+                    castBarAdditionalName = CreateAdditionalNameNode(pBaseNode, pTextNode);
                     if (castBarAdditionalName == null)
                     {
                         DalamudApi.PluginLog.Error("Couldn't get or create new ATK Text Node");
@@ -71,13 +71,42 @@ namespace OnTheFlyTranslator
                     castBarAdditionalName->AtkResNode.SetScale(0.8f, 0.8f);
                     castBarAdditionalName->AtkResNode.SetPositionFloat(7, -13);
                     castBarAdditionalName->SetAlignment(AlignmentType.Left);
-                    castBarAdditionalName->SetAlpha(pCastNameNode->Alpha_2);
+                    castBarAdditionalName->SetAlpha(pTextNode->Alpha_2);
                     castBarAdditionalName->SetText(translationResult.TranslatedName);
+                    castBarAdditionalName->ToggleVisibility(pTextNode->IsVisible());
                     break;
                 case CastBarTranslationStyle.NoOriginalText:
-                    pCastNameNode->SetText(translationResult.TranslatedName);
+                    pTextNode->SetText(translationResult.TranslatedName);
                     break;
             }
+        }
+
+        private bool GetTargetTextNode(AtkUnitBase* addon, ref AtkTextNode* pTextNode)
+        {
+            if (addon == null)
+            {
+                return false;
+            }
+
+            pTextNode = addon->GetTextNodeById(4);
+            return pTextNode != null;
+        }
+
+        private bool GetTranslationFromString(string srcText, ref TranslationResult output)
+        {
+            if(srcText.IsNullOrEmpty())
+            {
+                return false;
+            }
+
+            uint uActionId = 0;
+            if (!translationService.GetActionIDFromName(srcText, ref uActionId, true))
+            {
+                return false;
+            }
+
+            output = translationService.GetActionTranslation(uActionId);
+            return !output.TranslatedName.IsNullOrEmpty() && !output.TranslatedName.Contains("_rsv_");
         }
 
         private AtkTextNode* CreateAdditionalNameNode(AtkUnitBase* addon, AtkTextNode* srcNode)
@@ -90,11 +119,13 @@ namespace OnTheFlyTranslator
             DalamudApi.PluginLog.Warning("Necessary UI not created. Creating now.");
             castBarAdditionalName = UIManipulationHelper.CloneNode(srcNode);
             if (castBarAdditionalName == null)
+            {
                 return null;
+            }
 
-            var newStrPtr = UIManipulationHelper.Alloc(1024);
+            var newStrPtr = UIManipulationHelper.Alloc(STRING_ALLOC_SIZE);
             castBarAdditionalName->NodeText.StringPtr = (byte*)newStrPtr;
-            castBarAdditionalName->NodeText.BufSize = 1024;
+            castBarAdditionalName->NodeText.BufSize = STRING_ALLOC_SIZE;
 
             UIManipulationHelper.ExpandNodeList(addon, 1);
             addon->UldManager.NodeList[addon->UldManager.NodeListCount++] = (AtkResNode*)castBarAdditionalName;

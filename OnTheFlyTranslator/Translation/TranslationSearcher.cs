@@ -38,7 +38,7 @@ namespace OnTheFlyTranslator.Translation
             return actionId != 0;
         }
 
-        public TranslationResult? GetActionTranslation(uint actionId)
+        public TranslationResult GetActionTranslation(uint actionId)
         {
             var data = actionDatabase.GetAvailableTranslation(actionId);
             return new TranslationResult(data.Original?.Name.ToString() ?? "", data.Target?.Name.ToString() ?? "");
