@@ -3,15 +3,13 @@ using ImGuiNET;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.LayoutEngine;
-using System.Runtime.InteropServices;
 
 namespace OnTheFlyTranslator.Translation
 {
     internal class TranslationService : IDisposable
     {
         private static TranslationService? Instance;
+        private readonly Dictionary<string, uint> dictionaryStringToIdCache = [];
         public readonly TranslationDatabase<Lumina.Excel.Sheets.Action> actionDatabase;
 
         public TranslationService()
@@ -33,8 +31,17 @@ namespace OnTheFlyTranslator.Translation
 
         internal bool GetActionIDFromName(string strName, ref uint actionId, bool bFromOriginalLanguage)
         {
+            if(dictionaryStringToIdCache.TryGetValue(strName, out actionId))
+            {
+                return true;
+            }
+
             var sheet = actionDatabase.GetSheet(bFromOriginalLanguage);
             actionId = sheet?.FirstOrDefault(data => data.Name.ToString() == strName).RowId ?? 0;
+            if(actionId != 0)
+            {
+                dictionaryStringToIdCache.TryAdd(strName, actionId);
+            }
             return actionId != 0;
         }
 

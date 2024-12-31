@@ -11,14 +11,14 @@ namespace OnTheFlyTranslator
     {
         public UIModifier(string targetAddon)
         {
-            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PostRefresh, targetAddon, HandlePostRefreshEvent);
-            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PreDraw, targetAddon, HandlePreDrawEvent);
+            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PreRefresh, targetAddon, HandlePostRefreshEvent);
+            DalamudApi.AddonLifecycle.RegisterListener(AddonEvent.PostRequestedUpdate, targetAddon, HandlePostRequestedUpdate);
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             DalamudApi.AddonLifecycle.UnregisterListener(AddonEvent.PostRefresh, HandlePostRefreshEvent);
-            DalamudApi.AddonLifecycle.UnregisterListener(AddonEvent.PreDraw, HandlePreDrawEvent);
+            DalamudApi.AddonLifecycle.UnregisterListener(AddonEvent.PostRequestedUpdate, HandlePostRequestedUpdate);
         }
 
         protected virtual void HandlePostRefreshEvent(AddonEvent type, AddonArgs args)
@@ -26,7 +26,7 @@ namespace OnTheFlyTranslator
 
         }
 
-        protected virtual void HandlePreDrawEvent(AddonEvent type, AddonArgs args)
+        protected virtual void HandlePostRequestedUpdate(AddonEvent type, AddonArgs args)
         {
 
         }

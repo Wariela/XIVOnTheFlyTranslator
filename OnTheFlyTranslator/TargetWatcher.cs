@@ -13,14 +13,16 @@ namespace OnTheFlyTranslator
         private static readonly uint TARGET_TEXT_NODE_INDEX = 4;
 
         private readonly TranslationService translationService;
+        private TranslationResult lastTranslationResult;
         private AtkTextNode* castBarAdditionalName;
 
         public TargetWatcher(): base("_TargetInfoCastBar")
         {
             translationService = TranslationService.GetInstance();
+            lastTranslationResult = new TranslationResult("", "");
         }
 
-        protected override void HandlePreDrawEvent(AddonEvent type, AddonArgs args)
+        protected override void HandlePostRequestedUpdate(AddonEvent type, AddonArgs args)
         {
             AtkUnitBase* pUnitBase;
             if ((pUnitBase = (AtkUnitBase*)args.Addon) == null)
@@ -49,16 +51,19 @@ namespace OnTheFlyTranslator
                 return;
             }
 
-            TranslationResult translationResult = new TranslationResult("", "");
-            if (!GetTranslationFromString(pTextNode->NodeText.ToString(), ref translationResult))
-            {
-                return;
-            }
+            // if(lastTranslationResult.OriginalName != pTextNode->NodeText.ToString())
+            // {
+                if (!GetTranslationFromString(pTextNode->NodeText.ToString(), ref lastTranslationResult))
+                {
+                    return;
+                }
+            // }
+
 
             switch (Configuration.GetInstance().eOption)
             {
                 case CastBarTranslationStyle.Parenthesis:
-                    pTextNode->SetText($"{translationResult.OriginalName} ({translationResult.TranslatedName})");
+                    pTextNode->SetText($"{lastTranslationResult.OriginalName} ({lastTranslationResult.TranslatedName})");
                     break;
                 case CastBarTranslationStyle.SmallerText:
                     castBarAdditionalName = CreateAdditionalNameNode(pBaseNode, pTextNode);
@@ -72,11 +77,11 @@ namespace OnTheFlyTranslator
                     castBarAdditionalName->AtkResNode.SetPositionFloat(7, -13);
                     castBarAdditionalName->SetAlignment(AlignmentType.Left);
                     castBarAdditionalName->SetAlpha(pTextNode->Alpha_2);
-                    castBarAdditionalName->SetText(translationResult.TranslatedName);
+                    castBarAdditionalName->SetText(lastTranslationResult.TranslatedName);
                     castBarAdditionalName->ToggleVisibility(pTextNode->IsVisible());
                     break;
                 case CastBarTranslationStyle.NoOriginalText:
-                    pTextNode->SetText(translationResult.TranslatedName);
+                    pTextNode->SetText(lastTranslationResult.TranslatedName);
                     break;
             }
         }
