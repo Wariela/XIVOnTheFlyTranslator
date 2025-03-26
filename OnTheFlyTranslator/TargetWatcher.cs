@@ -10,7 +10,6 @@ namespace OnTheFlyTranslator
     public unsafe class TargetWatcher : UIModifier
     {
         private static readonly uint STRING_ALLOC_SIZE = 1024;
-        private static readonly uint TARGET_TEXT_NODE_INDEX = 4;
 
         private readonly TranslationService translationService;
         private TranslationResult lastTranslationResult;
