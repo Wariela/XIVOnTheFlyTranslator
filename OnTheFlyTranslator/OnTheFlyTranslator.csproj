@@ -7,8 +7,4 @@
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
-
-    <PropertyGroup>
-        <Use_DalamudPackager>false</Use_DalamudPackager>
-    </PropertyGroup>
 </Project>
