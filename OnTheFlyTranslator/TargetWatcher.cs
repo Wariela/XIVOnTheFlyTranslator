@@ -23,13 +23,12 @@ namespace OnTheFlyTranslator
 
         protected override void HandlePostRequestedUpdate(AddonEvent type, AddonArgs args)
         {
-            AtkUnitBase* pUnitBase;
-            if ((pUnitBase = (AtkUnitBase*)args.Addon) == null)
+            if (args.Addon.IsNull)
             {
                 return;
             }
 
-            UpdateElement(pUnitBase);
+            UpdateElement((AtkUnitBase*)args.Addon.Address);
         }
 
         protected unsafe void UpdateElement(AtkUnitBase* pBaseNode)
