@@ -1,9 +1,8 @@
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Game.Addon.Lifecycle;
-
 using OnTheFlyTranslator.Translation;
-using Dalamud.Utility;
+
 
 namespace OnTheFlyTranslator
 {
@@ -97,7 +96,7 @@ namespace OnTheFlyTranslator
 
         private bool GetTranslationFromString(string srcText, ref TranslationResult output)
         {
-            if(srcText.IsNullOrEmpty())
+            if(string.IsNullOrEmpty(srcText))
             {
                 return false;
             }
@@ -109,7 +108,7 @@ namespace OnTheFlyTranslator
             }
 
             output = translationService.GetActionTranslation(uActionId);
-            return !output.TranslatedName.IsNullOrEmpty() && !output.TranslatedName.Contains("_rsv_");
+            return !string.IsNullOrEmpty(output.TranslatedName) && !output.TranslatedName.Contains("_rsv_");
         }
 
         private AtkTextNode* CreateAdditionalNameNode(AtkUnitBase* addon, AtkTextNode* srcNode)

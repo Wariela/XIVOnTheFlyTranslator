@@ -1,7 +1,7 @@
-<Project Sdk="Dalamud.NET.Sdk/13.0.0">
+﻿<Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <PropertyGroup>
         <Authors>Wariela</Authors>
-        <Version>0.0.1.0</Version>
+        <Version>0.0.1.1</Version>
         <Description>A dalamud plugin that translate spell name on the fly</Description>
         <PackageProjectUrl>https://github.com/Wariela/XIVOnTheFlyTranslator</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
