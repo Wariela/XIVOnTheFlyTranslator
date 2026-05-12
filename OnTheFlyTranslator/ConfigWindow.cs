@@ -35,8 +35,10 @@ namespace OnTheFlyTranslator
             configuration.eTargetLanguage = DrawComboEnum("Target language", configuration.eTargetLanguage);
             configuration.eOption = DrawComboEnum("Style option", configuration.eOption);
 
+#if DEBUG
             if (ImGui.TreeNodeEx("Debugging options", ImGuiTreeNodeFlags.Framed))
                 Configuration.DrawDebugWindow |= ImGui.Button("Display database debug window");
+#endif
         }
 
         private static T DrawComboEnum<T>(string comboName, T target) where T : Enum
